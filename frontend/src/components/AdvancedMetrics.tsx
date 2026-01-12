@@ -5,7 +5,7 @@ interface Props {
 }
 
 export default function AdvancedMetrics({ weatherData }: Props) {
-  const { current, today } = weatherData as any
+  const { current, today } = weatherData
   const items = [
     { label: 'Pressão (MSL)', value: current?.pressure_msl, unit: 'hPa' },
     { label: 'VPD', value: current?.vapour_pressure_deficit, unit: 'kPa' },

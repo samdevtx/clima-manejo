@@ -91,7 +91,7 @@ export default function WeatherDashboard({ city, onWeatherDataLoad }: WeatherDas
     );
   }
 
-  const { derived, current, location, today, next_hours } = weatherData as any;
+  const { derived, current, location, today, next_hours } = weatherData;
   const waterBalanceStatus = getWaterBalanceStatus(derived.water_balance_today_mm ?? 0);
   const lastUpdate = formatTime(current.time);
 
@@ -169,7 +169,7 @@ export default function WeatherDashboard({ city, onWeatherDataLoad }: WeatherDas
         <div className="bg-card rounded-lg shadow-md p-4 border border-border">
           <div className="text-sm text-muted-foreground mb-2">Próximas 6h</div>
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {next_hours.map((h: any, idx: number) => {
+            {next_hours.map((h, idx) => {
               const t = new Date(h.time)
               const hour = t.toLocaleTimeString('pt-BR', { hour: '2-digit' })
               const prob = h.precipitation_probability ?? null
@@ -187,44 +187,7 @@ export default function WeatherDashboard({ city, onWeatherDataLoad }: WeatherDas
         </div>
       )}
 
-      <AdvancedMetrics weatherData={weatherData as any} />
-
-      {today && (
-        <div className="bg-card rounded-lg shadow-md p-4 border border-border">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm text-muted-foreground">Hoje (00:00–23:59)</div>
-              <div className="mt-2 text-card-foreground">
-                Máx {today.temperature_2m_max ?? '-'} °C · Mín {today.temperature_2m_min ?? '-'} °C
-              </div>
-              <div className="text-muted-foreground">Chuva {today.precipitation_sum ?? '-'} mm · ET₀ {today.et0_fao_evapotranspiration ?? '-'} mm</div>
-            </div>
-            <div>
-              <div className="text-card-foreground">Vento máx {today.wind_speed_10m_max ?? '-'} km/h · Raj {today.wind_gusts_10m_max ?? '-'} km/h</div>
-              <div className="text-muted-foreground">Prob. chuva máx {today.precipitation_probability_max ?? '-'}%</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {Array.isArray(next_hours) && next_hours.length > 0 && (
-        <div className="bg-card rounded-lg shadow-md p-4 border border-border">
-          <div className="text-sm text-muted-foreground mb-2">Próximas 6h</div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {next_hours.map((h: any, idx: number) => {
-              const t = new Date(h.time)
-              const hour = t.toLocaleTimeString('pt-BR', { hour: '2-digit' })
-              return (
-                <div key={idx} className="bg-muted rounded p-2">
-                  <div className="text-xs text-muted-foreground">{hour}</div>
-                  <div className="text-sm text-card-foreground tabular-nums">{h.precipitation_probability ?? '-'}%</div>
-                  <div className="text-xs text-muted-foreground">{h.precipitation ?? '-'} mm</div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
+      <AdvancedMetrics weatherData={weatherData} />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import {
   Wind, 
   CloudRain,
   Sun,
-  Eye
 } from 'lucide-react';
 import { 
   formatTemperature, 
@@ -43,7 +42,7 @@ export default function WeatherCards({ weatherData, isLoading }: WeatherCardsPro
     return null;
   }
 
-  const { current, today } = weatherData as any;
+  const { current, today } = weatherData;
 
   const tempOk = current.temperature_2m != null && current.temperature_2m >= 22 && current.temperature_2m <= 30;
   const cards = [

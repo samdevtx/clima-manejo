@@ -11,6 +11,7 @@ export function ThemeToggle() {
     const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null
     const prefersDark = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)').matches : false
     const isDark = stored ? stored === 'dark' : prefersDark
+    // eslint-disable-next-line
     setDark(isDark)
     document.documentElement.classList.toggle('dark', isDark)
   }, [])

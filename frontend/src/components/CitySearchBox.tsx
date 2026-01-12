@@ -189,8 +189,8 @@ export default function CitySearchBox({ onCitySelect, selectedCity, onClear }: C
         const json = await res.json();
         const list: City[] = Array.isArray(json) ? json : json.cities ?? [];
         dispatch({ type: 'SUGGESTIONS_SUCCESS', requestId, suggestions: list });
-      } catch (err: any) {
-        if (err?.name !== 'AbortError') {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== 'AbortError') {
           dispatch({ type: 'SUGGESTIONS_ERROR', requestId, message: 'Falha ao buscar sugestões' });
         }
       } finally {
@@ -204,7 +204,7 @@ export default function CitySearchBox({ onCitySelect, selectedCity, onClear }: C
         debounceRef.current = null;
       }
     };
-  }, [state.inputText, state.selectedCity, state.mode]);
+  }, [state.inputText, state.selectedCity, state.mode, state.requestId]);
 
   // Close on outside click
   useEffect(() => {

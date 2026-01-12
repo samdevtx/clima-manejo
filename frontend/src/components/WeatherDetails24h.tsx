@@ -28,7 +28,7 @@ export default function WeatherDetails24h({ weatherData, isLoading }: WeatherDet
     return null;
   }
 
-  const { today } = weatherData as any;
+  const { today } = weatherData;
   const date = formatDate(today.date);
 
   return (
