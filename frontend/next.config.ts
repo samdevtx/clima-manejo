@@ -3,6 +3,17 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination:
+          process.env.NODE_ENV === 'development'
+            ? 'http://backend:8000/:path*' // Docker Compose DNS
+            : '/api/python/:path*', // Vercel Serverless Function
+      },
+    ]
+  },
   async headers() {
     return [
       {
