@@ -57,8 +57,8 @@ O sistema adota o padrão **BFF (Backend for Frontend)** simplificado, onde o Ne
 
 ```mermaid
 graph LR
-    User[Navegador] -->|HTTPS| Next[Next.js (Frontend)]
-    Next -->|API Interna| Fast[FastAPI (Backend)]
+    User[Navegador] -->|HTTPS| Next[Next.js Frontend]
+    Next -->|API Interna| Fast[FastAPI Backend]
     Fast -->|Cache| Redis[(Redis)]
     Fast -->|Dados Externos| OpenMeteo[Open-Meteo API]
 ```
