@@ -65,12 +65,12 @@ export default function WeatherCards({ weatherData, isLoading }: WeatherCardsPro
       bgColor: 'bg-primary/15'
     },
     {
-      icon: current.precipitation > 0 ? CloudRain : Sun,
+      icon: (current.precipitation ?? 0) > 0 ? CloudRain : Sun,
       title: 'Precipitação',
       value: current.precipitation != null ? formatPrecipitation(current.precipitation) : '-',
       subtitle: `Última hora · prob. ${displayOrDash<number>(today?.precipitation_probability_max, (v) => `${v}%`)}`,
-      color: current.precipitation > 0 ? 'text-primary' : 'text-warning',
-      bgColor: current.precipitation > 0 ? 'bg-primary/15' : 'bg-warning/15'
+      color: (current.precipitation ?? 0) > 0 ? 'text-primary' : 'text-warning',
+      bgColor: (current.precipitation ?? 0) > 0 ? 'bg-primary/15' : 'bg-warning/15'
     },
     {
       icon: Wind,
