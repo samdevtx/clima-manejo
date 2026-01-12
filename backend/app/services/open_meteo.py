@@ -1,8 +1,10 @@
 import httpx
+import os
 from typing import Dict, Any
 from datetime import datetime, timedelta
 from ..schemas import WeatherCurrent, WeatherToday, WeatherDerived, NextHour
 from ..cache import get_weather_cache, set_weather_cache
+from ..logger import logger
 from typing import List
 
 async def get_weather_data(latitude: float, longitude: float) -> Dict[str, Any]:
@@ -19,8 +21,9 @@ async def get_weather_data(latitude: float, longitude: float) -> Dict[str, Any]:
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
             # Get current weather and daily forecast
+            api_url = os.getenv("OPEN_METEO_API_URL", "https://api.open-meteo.com/v1/forecast")
             response = await client.get(
-                "https://api.open-meteo.com/v1/forecast",
+                api_url,
                 params={
                     "latitude": latitude,
                     "longitude": longitude,
@@ -199,10 +202,10 @@ async def get_weather_data(latitude: float, longitude: float) -> Dict[str, Any]:
             return result
             
     except httpx.RequestError as e:
-        print(f"Error fetching weather data: {e}")
+        logger.error(f"Error fetching weather data: {e}", exc_info=True)
         raise
     except Exception as e:
-        print(f"Unexpected error fetching weather data: {e}")
+        logger.error(f"Unexpected error fetching weather data: {e}", exc_info=True)
         raise
 
 def _first(arr):

@@ -1,35 +1,41 @@
-FROM node:20-bookworm-slim
-
+# Stage 1: Dependencies
+FROM node:20-bookworm-slim AS deps
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Copy application code
+# Stage 2: Builder
+FROM node:20-bookworm-slim AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build the application
 ENV NODE_ENV=production
 RUN npm run build
 
-# Install runtime dependencies and apply security upgrades
-RUN apt-get update && apt-get -y upgrade && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Stage 3: Runner
+FROM node:20-bookworm-slim AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Create non-root user (Debian)
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd -g 1001 nodejs
-RUN useradd -m -u 1001 -g nodejs nextjs
+RUN useradd -u 1001 -g nodejs -s /bin/sh -m nextjs
 
-# Change ownership of the app directory
-RUN chown -R nextjs:nodejs /app
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
 USER nextjs
-
-# Expose port
 EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

@@ -1,8 +1,10 @@
 import httpx
 import unicodedata
+import os
 from typing import List, Optional
 from ..schemas import City
 from ..cache import get_geocoding_cache, set_geocoding_cache
+from ..logger import logger
 
 async def search_cities(query: str) -> List[City]:
     """Search cities using Open-Meteo Geocoding API"""
@@ -18,8 +20,9 @@ async def search_cities(query: str) -> List[City]:
     
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
+            api_url = os.getenv("OPEN_METEO_GEOCODING_API_URL", "https://geocoding-api.open-meteo.com/v1/search")
             response = await client.get(
-                "https://geocoding-api.open-meteo.com/v1/search",
+                api_url,
                 params={
                     "name": normalized_query,
                     "count": 10,
@@ -51,10 +54,10 @@ async def search_cities(query: str) -> List[City]:
             return cities
             
     except httpx.RequestError as e:
-        print(f"Error searching cities: {e}")
+        logger.error(f"Error searching cities: {e}", exc_info=True)
         return []
     except Exception as e:
-        print(f"Unexpected error searching cities: {e}")
+        logger.error(f"Unexpected error searching cities: {e}", exc_info=True)
         return []
 
 def normalize_city_name(city_name: str) -> str:

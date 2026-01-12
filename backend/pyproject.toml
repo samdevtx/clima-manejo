@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "canac-clima-backend"
+name = "clima-manejo-backend"
 version = "0.1.0"
-description = "Backend para Canac Clima - Manejo de Cana"
-authors = [{name = "Canac Team"}]
+description = "Backend para Clima para Manejo - Manejo de Cana"
+authors = [{name = "samdevtx"}]
 dependencies = [
     "fastapi==0.104.1",
     "uvicorn[standard]==0.24.0",
@@ -15,3 +15,9 @@ dependencies = [
     "python-dotenv==1.0.0",
 ]
 requires-python = ">=3.11"
+
+[project.optional-dependencies]
+test = [
+    "pytest==7.4.3",
+    "pytest-asyncio==0.21.1",
+]

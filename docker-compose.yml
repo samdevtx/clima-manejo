@@ -3,15 +3,36 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/tests:/app/tests
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
       - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
-      - canac-network
+      - clima-manejo-network
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - clima-manejo-network
 
   frontend:
     build: ./frontend
@@ -27,8 +48,8 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - canac-network
+      - clima-manejo-network
 
 networks:
-  canac-network:
+  clima-manejo-network:
     driver: bridge
