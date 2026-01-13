@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination:
           process.env.NODE_ENV === 'development'
-            ? 'http://backend:8000/:path*' // Docker Compose DNS
-            : '/api/python/:path*', // Vercel Serverless Function
+            ? `${process.env.BACKEND_URL || 'http://127.0.0.1:8000'}/:path*`
+            : '/api/python/:path*',
       },
     ]
   },

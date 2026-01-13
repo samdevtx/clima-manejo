@@ -6,5 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from app.main import app
 
-# This is the entry point for Vercel's Python Runtime
-# It looks for a variable named 'app' in the file specified in vercel.json
+# Set root_path for Vercel
+# The requests come in as /api/python/endpoint
+# This ensures FastAPI strips this prefix and matches the correct route
+app.root_path = "/api/python"

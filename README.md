@@ -31,6 +31,7 @@ Construído com uma arquitetura moderna, escalável e tipada de ponta a ponta.
 ### DevOps & Qualidade
 *   **Docker Compose:** Ambiente de desenvolvimento e produção containerizado.
 *   **CI/CD (GitHub Actions):** Pipelines automatizados de teste, lint e segurança.
+*   **Vercel:** Deploy híbrido (Frontend + Serverless Functions).
 *   **Testes:** Pytest (Backend) e Jest/Testing Library (Frontend).
 *   **Segurança:** Rate Limiting, Headers HTTP seguros, Scan de vulnerabilidades (Trivy).
 
@@ -38,28 +39,53 @@ Construído com uma arquitetura moderna, escalável e tipada de ponta a ponta.
 
 A aplicação é totalmente containerizada. Você precisa apenas do **Docker** e **Docker Compose**.
 
-```bash
-# 1. Clone o repositório
-git clone https://github.com/samdevtx/clima-manejo.git
-cd clima-manejo
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/samdevtx/clima-manejo.git
+    cd clima-manejo
+    ```
 
-# 2. Inicie a aplicação
-docker compose up --build
-```
+2.  **Configure o ambiente:**
+    Copie o arquivo de exemplo (opcional, pois os defaults funcionam):
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Inicie a aplicação:**
+    ```bash
+    docker compose up --build
+    ```
 
 Acesse em seu navegador:
 *   **Frontend:** [http://localhost:3000](http://localhost:3000)
 *   **API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
+## ☁️ Deploy na Vercel
+
+O projeto está configurado para deploy *zero-config* na Vercel, utilizando a arquitetura híbrida (Next.js + Python Serverless).
+
+### Variáveis de Ambiente (Produção)
+
+Configure as seguintes variáveis no painel da Vercel:
+
+| Variável | Descrição | Exemplo |
+| :--- | :--- | :--- |
+| `OPEN_METEO_API_URL` | API de Clima | `https://api.open-meteo.com/v1/forecast` |
+| `OPEN_METEO_GEOCODING_API_URL` | API de Geocodificação | `https://geocoding-api.open-meteo.com/v1/search` |
+| `LOG_LEVEL` | Nível de Log | `INFO` |
+| `REDIS_URL` | (Opcional) URL do Redis/KV | `redis://...` |
+
+> **Nota:** Não configure `BACKEND_URL` na Vercel. O roteamento interno cuida disso automaticamente.
+
 ## 🏗️ Arquitetura
 
-O sistema adota o padrão **BFF (Backend for Frontend)** simplificado, onde o Next.js atua como camada de apresentação e proxy reverso para o FastAPI, garantindo segurança (Same-Origin) e simplificando o consumo de APIs.
+O sistema adota um padrão de **Proxy Interno**, onde o Next.js atua como camada de apresentação e redireciona chamadas de API (`/api/*`) diretamente para o FastAPI (rodando como Serverless Function em produção ou container em dev).
 
 ```mermaid
 graph LR
     User[Navegador] -->|HTTPS| Next[Next.js Frontend]
-    Next -->|API Interna| Fast[FastAPI Backend]
-    Fast -->|Cache| Redis[(Redis)]
+    Next -->|Rewrite /api/*| Fast[FastAPI Backend]
+    Fast -->|Cache| Redis[(Redis/Memória)]
     Fast -->|Dados Externos| OpenMeteo[Open-Meteo API]
 ```
 
@@ -82,7 +108,7 @@ clima-manejo/
 ```
 
 ### Decisões Técnicas Chave
-1.  **Cache Estratégico:** O Backend implementa cache Redis (TTL 10min) para chamadas externas, reduzindo custos e latência.
+1.  **Cache Estratégico:** O Backend implementa cache (Redis ou Memória) para chamadas externas, reduzindo custos e latência.
 2.  **Resiliência:** O Frontend possui *Error Boundaries* e *Skeletons* para garantir UX fluida mesmo em falhas parciais.
 3.  **Normalização:** Todos os dados são normalizados no Backend, entregando ao Frontend apenas o necessário para renderização (padrão *View Model*).
 
