@@ -182,7 +182,7 @@ export default function CitySearchBox({ onCitySelect, selectedCity, onClear }: C
 
       dispatch({ type: 'SUGGESTIONS_REQUEST', requestId });
       try {
-        const res = await fetch(`/api/cities/?q=${encodeURIComponent(state.inputText)}`, {
+        const res = await fetch(`/api/cities?q=${encodeURIComponent(state.inputText)}`, {
           signal: controller.signal,
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

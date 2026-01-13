@@ -5,7 +5,7 @@ from ..schemas import City
 
 router = APIRouter()
 
-@router.get("/", response_model=List[City])
+@router.get("", response_model=List[City])
 async def get_cities(q: str = Query(..., description="City name to search for")):
     """Search cities by name with autocomplete"""
     if not q or len(q.strip()) < 2:

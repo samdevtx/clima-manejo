@@ -6,7 +6,7 @@ from ..schemas import WeatherResponse, City
 
 router = APIRouter()
 
-@router.get("/", response_model=WeatherResponse)
+@router.get("", response_model=WeatherResponse)
 async def get_weather(
     city: str = Query(..., description="City name"),
     lat: Optional[float] = Query(None, description="Latitude"),
