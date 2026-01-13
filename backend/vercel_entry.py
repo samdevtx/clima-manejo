@@ -7,6 +7,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from app.main import app
 
 # Set root_path for Vercel
-# The requests come in as /api/python/endpoint
+# The requests come in as /api/endpoint (routed by vercel.json)
 # This ensures FastAPI strips this prefix and matches the correct route
-app.root_path = "/api/python"
+app.root_path = "/api"

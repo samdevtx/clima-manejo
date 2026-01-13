@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         destination:
           process.env.NODE_ENV === 'development'
             ? `${process.env.BACKEND_URL || 'http://127.0.0.1:8000'}/:path*`
-            : '/api/python/:path*',
+            : '/api/:path*', // Fallback for prod, though Vercel handles it
       },
     ]
   },
